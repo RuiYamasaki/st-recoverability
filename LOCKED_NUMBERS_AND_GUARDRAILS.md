@@ -41,6 +41,19 @@ Gate 0 measured values below are verified to committed result files on branch ga
 | GATE 2: pinned sigma by marker cutoff (0.7 stable / 0.6 wide / 0.8 degenerate) | [1.49,1.70] / [0.20,2.48] / none | results/gate2_design_grid.csv | sigma_um by excl_threshold | 2026-06-18 |
 | GATE 2: NB-emission sigma shift; dense accuracy shift | +0.10 um ; -0.016 | results/gate2_nbinom.csv | sigma_shift_um, dense_oracle_shift | 2026-06-18 |
 | GATE 2: NB-emission frontier monotonicity / oracle>=naive | (0,0) viol ; True | results/gate2_nbinom.csv | nb_frontier_mono_viol_*, nb_frontier_oracle_ge_naive_all | 2026-06-18 |
+| GATE 3: breast admissible markers (validity test, p<0.05, 1000 perms) | 28 of 38 | results/gate3_validity_breast.csv | admissible | 2026-06-18 |
+| GATE 3: breast admissible vs rejected mean displacement signal | +0.094 / -0.055 | results/gate3_validity_breast.csv | real_signal by admissible | 2026-06-18 |
+| GATE 3: breast destabilising loose markers permutation p-values | 0.24-0.996 (all fail) | results/gate3_validity_breast.csv | pval (AHSP,CRHBP,CYP1A1,EGFL7,SLC4A1) | 2026-06-18 |
+| GATE 3: breast re-pinned sigma (admissible set) point; bootstrap CI | 1.99 ; [1.43, 2.63] um | results/gate3_pin_breast.csv | sigma_point_um, sigma_ci_lo/hi_um | 2026-06-18 |
+| GATE 3: breast dense oracle accuracy across sigma CI | [0.663, 0.805] | results/gate3_pin_breast.csv | dense_oracle_at_sigma_ci_lo/hi | 2026-06-18 |
+| GATE 3: cell-typing sigma spread (K=10/14/14alt/20) | [1.99, 2.65] um | results/gate3_typing.csv | sigma_point_um | 2026-06-18 |
+| GATE 3: cell-typing max dense accuracy at any sigma-CI optimistic end | 0.803 | results/gate3_typing.csv | dense_oracle_at_sigma_ci_lo | 2026-06-18 |
+| GATE 3: lung admissible markers; re-pinned sigma point; bootstrap CI | 31 of 32 ; 1.83 ; [1.62, 2.08] um | results/gate3_pin_lung.csv | n_admissible_markers, sigma_point_um, sigma_ci_lo/hi_um | 2026-06-18 |
+| GATE 3: lung dense oracle accuracy across sigma CI | [0.746, 0.796] | results/gate3_pin_lung.csv | dense_oracle_at_sigma_ci_lo/hi | 2026-06-18 |
+
+### Can-claim update (2026-06-18, post Gate 3)
+- Under a principled, non-circular marker-validity test (admissible only if the adjacent-minus-distant displacement signal exceeds a position-permutation null at p<0.05, never selected by the resulting sigma), the markers that destabilised sigma at the loose cutoff fail the test, and the re-pinned sigma keeps dense-regime best-possible assignment accuracy below 0.95 (and below 0.9) across its bootstrap CI on the breast dataset, on an independent Xenium lung-cancer dataset, and across four cell-typing choices.
+- Displacement sigma measured under the validity test is about 1.8-2.0 um on both tissues (typing spread 1.99-2.65 um), a factor of ~1.3 across reasonable choices, versus the ~12x swing across the old arbitrary marker cutoffs.
 
 ### Can-claim update (2026-06-18, post Gate 2)
 - The displacement sigma can be measured directly on Xenium from spatial marker leakage: point 1.61 um, statistical 95% CI [0.79, 2.53] um.

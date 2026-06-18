@@ -149,17 +149,20 @@ def load_xenium_cells_genes(h5_path: str = None, cells_parquet: str = None):
 
 
 def build_realistic_model_from_xenium(n_types: int = 15, excl_threshold: float = 0.7,
-                                      seed: int = None, min_cells: int = 50):
+                                      seed: int = None, min_cells: int = 50,
+                                      h5_path: str = None, cells_parquet: str = None,
+                                      name: str = "realistic_xenium_kmeans"):
     """Cluster the Xenium cell-by-gene matrix into types (MiniBatchKMeans on
     median-normalised log1p counts), build per-type mean expression profiles, exclusive
     markers, proportions, and a per-gene negative-binomial dispersion estimated from the
     within-type count variance. Clusters smaller than min_cells are dropped (their cells
-    removed). Returns (model, real) where real carries the per-cell counts, centroids,
-    types and section geometry for the leakage measurement."""
+    removed). h5_path/cells_parquet select the dataset (default: breast). Returns
+    (model, real) where real carries the per-cell counts, centroids, types and section
+    geometry for the leakage measurement."""
     from sklearn.cluster import MiniBatchKMeans
     if seed is None:
         seed = config.MASTER_SEED
-    X, genes, coords, total = load_xenium_cells_genes()
+    X, genes, coords, total = load_xenium_cells_genes(h5_path, cells_parquet)
     G = X.shape[1]
     # normalise to median total, log1p, cluster
     sf = total.copy(); sf[sf == 0] = 1.0
@@ -182,7 +185,7 @@ def build_realistic_model_from_xenium(n_types: int = 15, excl_threshold: float =
     owner = _exclusivity(composition, excl_threshold)
     dispersion = _estimate_dispersion(X, labels, n_types)
     model = ExpressionModel(
-        name="realistic_xenium_kmeans", n_types=n_types, n_genes=G,
+        name=name, n_types=n_types, n_genes=G,
         type_names=[f"xen{t}" for t in range(n_types)],
         proportions=proportions, composition=composition, gene_names=genes,
         excl_threshold=excl_threshold, excl_owner=owner, mean_expr=mean_expr,
