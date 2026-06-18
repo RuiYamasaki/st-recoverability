@@ -31,8 +31,9 @@ Leakage and pin (`results/gate2_xenium_pin.csv`):
 - Xenium-pinned displacement sigma: 1.61 um (`xenium_pinned_sigma_um`), versus the
   MERFISH-pinned 2.67 um. The smaller Xenium value is consistent with Xenium's finer
   reported localisation.
-- oracle assignment accuracy at the Xenium-pinned sigma: dense (packing 13,625
-  cells/mm^2) 0.783, naive 0.700; sparse (packing 2,575) 0.898. Both below 0.9.
+- oracle assignment accuracy at the Xenium-pinned sigma (converged grid): dense (packing
+  13,625 cells/mm^2) 0.784, naive 0.703; sparse (packing 2,575) 0.906. Both below 0.95;
+  dense below 0.9.
 
 ## Task 2: statistical CI and design-sensitivity on sigma
 
