@@ -33,6 +33,21 @@ Gate 0 measured values below are verified to committed result files on branch ga
 | GATE 1: oracle acc at pinned sigma, MERFISH-like (sparse) / Xenium-like (dense) | 0.836 / 0.643 | results/gate1_leakage.csv | oracle_acc_at_pinned | 2026-06-18 |
 | GATE 1: structural-sensitivity oracle ranges (baseline / aniso / mixture) | [0.290,0.925] / [0.281,0.924] / [0.254,0.833] | results/gate1_structural.csv | oracle_acc | 2026-06-18 |
 
+### Can-claim update (2026-06-18, post Gate 1)
+- The recovery frontier survives realistic overlapping expression (assignment frontier essentially unchanged, oracle-minus-naive gap preserved) and survives non-Voronoi geometry and non-Gaussian displacement (monotone, oracle at or above naive, dense-regime limit biting).
+- At a sigma pinned to measured MERFISH spatial marker-leakage, best-possible transcript-assignment accuracy is about 0.84 sparse and 0.64 dense, both below 0.9.
+
+### Cannot-claim update (2026-06-18, post Gate 1)
+- The dense-regime limit for Xenium specifically (sigma was borrowed from MERFISH).
+- A precise sigma (CI uncharacterized; per-marker spread reaches near zero, where the limit would not bite).
+- Final accuracy numbers (per-type-mean emission makes them upper bounds; the real limit is at least this severe).
+
+### Gate 2 pre-committed thresholds (locked 2026-06-18; orchestrator judges, executor does not)
+- KILL if the optimistic (low-sigma) end of the combined Xenium-direct sigma uncertainty (statistical CI plus design-sensitivity) gives dense-regime oracle assignment accuracy above 0.95. The data cannot then rule out the absence of a limit.
+- KILL if sigma cannot be reliably measured on Xenium: the leakage statistic is degenerate or noise-dominated, or sigma swings more than an order of magnitude across reasonable design choices with no defensible central value.
+- KILL if, under non-idealized negative-binomial emission, the frontier flattens to oracle accuracy above 0.95 across the realistic regime.
+- PASS if the entire combined Xenium-direct sigma uncertainty band keeps dense-regime oracle accuracy below 0.95 (the limit robustly bites), sigma is stable across design choices within its CI, and the frontier and the dense-regime bite survive non-idealized emission. Report the dense-regime accuracy as a band with honest error bars, and note where that band sits relative to 0.9.
+
 ## Gate 0 pre-committed thresholds (locked 2026-06-18)
 Decision rests on the oracle frontier shape and the realism match. Running real segmenters (Baysor / Proseg) is an optional headroom signal, not a kill criterion, so install friction does not gate the decision.
 - **KILL** if the oracle assignment accuracy (or oracle adjusted Rand index vs true cell labels) is > 0.95 across the entire realistic regime (the band where the generator matches real summary statistics). No fundamental limit in the relevant range means no frontier.
