@@ -1,0 +1,19 @@
+# Streamed/cached public data is never committed (see README)
+data/
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+# OS / editor
+.DS_Store
+Thumbs.db
+# Large/raw artifacts
+*.parquet
+*.h5
+*.h5ad
+*.zarr/
+*.gef
+*.tar
+*.tar.gz
+*.zip
