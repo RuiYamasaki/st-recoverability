@@ -62,6 +62,23 @@ Gate 0 measured values below are verified to committed result files on branch ga
 - That real published methods reach this ceiling. The bound is on the best possible; where Baysor, Proseg, and similar methods sit relative to it is measured in the headroom analysis, not yet known.
 - Anything about Xenium in general; the bound is the dense-tissue regime.
 
+### Headroom measured values (2026-06-18, branch headroom; matched transcript-assignment accuracy vs known truth)
+| number (what it is) | value | source result file | column / field | date verified |
+|---|---|---|---|---|
+| oracle ceiling, dense sigma CI (1.43/1.99/2.63 um) | 0.803 / 0.730 / 0.651 | results/headroom_oracle_naive.csv | oracle_acc_matched | 2026-06-18 |
+| naive nearest-nucleus, dense sigma CI | 0.731 / 0.639 / 0.546 | results/headroom_oracle_naive.csv | naive_acc_matched | 2026-06-18 |
+| ComSeg (nuclei prior), dense sigma CI | 0.722 / 0.634 / 0.543 | results/headroom_methods.csv | matched_accuracy (ComSeg, nuclei_prior) | 2026-06-18 |
+| pciSeq (nuclei prior), dense sigma CI | 0.667 / 0.604 / 0.504 | results/headroom_methods.csv | matched_accuracy (pciSeq, nuclei_prior) | 2026-06-18 |
+| best-sophisticated-method (ComSeg) to oracle gap, dense sigma CI | 0.081 / 0.096 / 0.108 | results/headroom_oracle_naive.csv, headroom_methods.csv | derived | 2026-06-18 |
+| methods that ran / toolchain-blocked | pciSeq 0.0.61, ComSeg 1.8.5 ran; Proseg, Baysor blocked | outputs/HEADROOM_REPORT.md | install outcomes | 2026-06-18 |
+
+### Can-claim update (2026-06-18, post headroom)
+- On known-truth synthetic data matched to the realistic Gate 3 configuration, two real published nuclei-prior assignment methods (pciSeq, ComSeg) both fall below the oracle ceiling at every regime, with the best of them (ComSeg) 0.08 to 0.12 below the dense-regime ceiling, and neither exceeds the naive nearest-nucleus baseline. (Proseg and Baysor could not be installed on the test machine; the free-segmentation cost is not quantified.)
+
+### Cannot-claim update (2026-06-18, post headroom)
+- That methods are "near the wall" or "have headroom": that interpretation of the measured oracle-minus-method gap is for the orchestrator, not asserted by the executor.
+- A free-segmentation (no nuclei prior) headroom number; that mode did not produce a successful run on this machine.
+
 ### Can-claim update (2026-06-18, post Gate 2)
 - The displacement sigma can be measured directly on Xenium from spatial marker leakage: point 1.61 um, statistical 95% CI [0.79, 2.53] um.
 - Across the statistical 95% CI the dense-regime best-possible assignment accuracy is [0.675, 0.891], all below 0.95; the limit bites under directly-measured Xenium conditions across the statistical uncertainty, and survives negative-binomial within-type emission (monotone, oracle at or above naive).

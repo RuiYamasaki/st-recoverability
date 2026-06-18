@@ -80,3 +80,10 @@ Under a principled, non-circular marker-validity test (a marker is admissible on
 
 ### Decision D9 (2026-06-18): gating complete; begin paper-building with the segmenter-headroom analysis
 The empirical core is locked. First paper-building analysis places real published methods against the oracle ceiling on known-truth synthetic data, with true nuclei as a prior to isolate assignment headroom, to make the bound matter to practice. This is the main lever on the realistic ceiling (Nature Methods).
+
+### Segmenter-headroom execution log (2026-06-18, branch headroom)
+Built and run. Executor asserts no conclusion (near-the-wall vs headroom is the orchestrator's call); raw numbers in outputs/HEADROOM_REPORT.md and committed result files. Regen: `python src/headroom_run_all.py`; table: `python src/headroom_report.py`. Gates 0-3 left byte-identical.
+- Methods that ran (Python 3.13, nuclei-prior, documented defaults): pciSeq 0.0.61 (Nature Methods 2020) and ComSeg 1.8.5 (2024). Proseg (Rust) and Baysor (Julia) are toolchain-blocked on this Windows machine (no MSVC/GCC linker, no Julia, no prebuilt binaries) and were substituted by ComSeg + pciSeq. ComSeg free-segmentation mode (no prior) was attempted and failed (AssertionError); free-segmentation is therefore not represented by a successful run.
+- Metric: matched transcript-assignment accuracy vs known truth (Hungarian one-to-one matching of method-cells to true-cells; equals direct id-match for oracle/naive).
+- Dense regime across the sigma CI (1.43, 1.99, 2.63 um): oracle 0.803/0.730/0.651; naive 0.731/0.639/0.546; ComSeg 0.722/0.634/0.543; pciSeq 0.667/0.604/0.504. Sparse: oracle 0.882, naive 0.833, ComSeg 0.762, pciSeq 0.230. Representative: oracle 0.808, naive 0.741, ComSeg 0.730, pciSeq 0.475.
+- best-sophisticated-method (ComSeg) to oracle gap: 0.081/0.096/0.108 across the dense sigma CI (0.120 sparse, 0.078 representative). Neither sophisticated method exceeds the naive nearest-nucleus baseline on this known-truth synthetic; naive-to-oracle gap 0.072/0.091/0.105 dense.
