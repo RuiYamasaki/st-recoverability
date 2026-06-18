@@ -55,6 +55,13 @@ Gate 0 measured values below are verified to committed result files on branch ga
 - Under a principled, non-circular marker-validity test (admissible only if the adjacent-minus-distant displacement signal exceeds a position-permutation null at p<0.05, never selected by the resulting sigma), the markers that destabilised sigma at the loose cutoff fail the test, and the re-pinned sigma keeps dense-regime best-possible assignment accuracy below 0.95 (and below 0.9) across its bootstrap CI on the breast dataset, on an independent Xenium lung-cancer dataset, and across four cell-typing choices.
 - Displacement sigma measured under the validity test is about 1.8-2.0 um on both tissues (typing spread 1.99-2.65 um), a factor of ~1.3 across reasonable choices, versus the ~12x swing across the old arbitrary marker cutoffs.
 
+### Can-claim update (2026-06-18, post Gate 3, expanded)
+- Under a principled non-circular validity test, on Xenium data calibrated to realistic expression overlap and a data-pinned displacement of about 1.8 to 2.0 um, the best-possible transcript-to-cell assignment accuracy in dense tissue (about 13,600 cells/mm2, realistic in both breast and lung) is bounded below 0.9 (about 0.66 to 0.81 across the sigma CI), replicated on two independent tissues, stable across cell-typing, and robust to within-type expression variance and to non-Voronoi geometry and non-Gaussian displacement.
+
+### Cannot-claim update (2026-06-18, post Gate 3)
+- That real published methods reach this ceiling. The bound is on the best possible; where Baysor, Proseg, and similar methods sit relative to it is measured in the headroom analysis, not yet known.
+- Anything about Xenium in general; the bound is the dense-tissue regime.
+
 ### Can-claim update (2026-06-18, post Gate 2)
 - The displacement sigma can be measured directly on Xenium from spatial marker leakage: point 1.61 um, statistical 95% CI [0.79, 2.53] um.
 - Across the statistical 95% CI the dense-regime best-possible assignment accuracy is [0.675, 0.891], all below 0.95; the limit bites under directly-measured Xenium conditions across the statistical uncertainty, and survives negative-binomial within-type emission (monotone, oracle at or above naive).
