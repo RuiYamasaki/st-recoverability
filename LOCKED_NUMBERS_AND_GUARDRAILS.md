@@ -11,11 +11,20 @@ This is the document trusted when chat history and memory cannot be. A number en
 - **Writing rules (paper and every caption; internal docs exempt):** no em dashes (use commas, colons, or separate sentences; en dashes in numeric ranges are fine; grep after every edit). Readable by a non-specialist without losing precision; every number and confidence interval stated exactly.
 
 ## Locked numbers (project headline numbers only)
-None yet. No project measurement has been made. Literature facts verified by search live in the references with their citations, not here.
+Gate 0 measured values below are verified to committed result files on branch gate0. The Gate 0 verdict itself (PASS/KILL) is pending orchestrator audit and is NOT recorded here as a finding.
 
 | number (what it is) | value | source result file | column / field | date verified |
 |---|---|---|---|---|
-| (none yet) | | | | |
+| oracle assignment accuracy, full sweep range | [0.234, 0.957] | results/sweep.csv | oracle_acc | 2026-06-18 |
+| oracle assignment-partition ARI vs true cell labels, full range | [0.110, 0.919] | results/sweep.csv | assign_ari_vs_truecells_oracle | 2026-06-18 |
+| oracle expression-profile ARI vs true types, full range | [1.000, 1.000] | results/sweep.csv | profile_ari_vs_truetype | 2026-06-18 |
+| naive expression-profile ARI vs true types, full range | [0.102, 1.000] | results/sweep.csv | naive_profile_ari_vs_truetype | 2026-06-18 |
+| oracle >= naive at every grid point | True (min margin +0.0061) | results/sweep.csv | oracle_ge_naive, oracle_minus_naive | 2026-06-18 |
+| oracle assignment accuracy inside realistic band (sigma<=2um) | [0.719, 0.953] | results/realism_oracle.csv | oracle_acc where in_realistic_sigma_band | 2026-06-18 |
+| generator vs real median tx/cell max relative error at anchors | 0.0152 | results/realism_oracle.csv | tx_match_rel_err | 2026-06-18 |
+| generator vs real packing max relative error at anchors | 1.4e-16 | results/realism_oracle.csv | packing_match_rel_err | 2026-06-18 |
+| real median transcripts/cell (Xenium breast / MERFISH hypothalamus) | 66-86 / 267-312 | results/realism.csv | median_tx_per_cell | 2026-06-18 |
+| real packing (Xenium breast / MERFISH hypothalamus), cells/mm^2 | 13250-14125 / 2500-2700 | results/realism.csv | packing_cells_per_mm2 | 2026-06-18 |
 
 ## Gate 0 pre-committed thresholds (locked 2026-06-18)
 Decision rests on the oracle frontier shape and the realism match. Running real segmenters (Baysor / Proseg) is an optional headroom signal, not a kill criterion, so install friction does not gate the decision.

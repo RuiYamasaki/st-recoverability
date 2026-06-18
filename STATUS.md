@@ -21,8 +21,18 @@
 - Confirm whether the under-review IBL paper is public as a preprint (affects how it is cited and how much the prior recoverability framing is already attributable).
 - Choose the specific public datasets for the realism anchor (candidates: a 10x Xenium release, a Vizgen MERFISH release, a Stereo-seq release).
 
+## Gate 0 execution log (2026-06-18, branch gate0)
+Gate 0 was built and run. Executor asserts no PASS/KILL; raw numbers are in outputs/GATE0_REPORT.md and the committed result files. Regen: `python src/run_all.py` (or `--skip-realism`); table: `python src/report_table.py`.
+- Generator src/generator.py, oracle src/oracle.py, sweep src/sweep.py, realism src/realism.py + anchor src/anchor.py. Master seed 20260618.
+- Sweep grid 5x5x5 (density {50,90,160,280,500} tx/cell; packing {2000,3400,5700,9500,16000} cells/mm2; sigma {0.5,1,2,4,8} um) -> results/sweep.csv.
+- Oracle assignment accuracy full-grid range [0.234, 0.957], monotone in sigma and packing (0 violations), oracle >= naive at all 125 points.
+- Two ARIs: assignment-partition ARI vs true cell labels [0.110, 0.919] (tracks the frontier); expression-profile ARI vs true types = 1.000 everywhere (oracle errors are type-preserving; naive profile-ARI collapses to 0.10). Finding: identity assignment and cell-type recovery are decoupled.
+- Realism anchors: Xenium FFPE Human Breast Cancer Rep1 (10x release 1.0.1, cells.parquet) and Moffitt 2018 MERFISH mouse hypothalamus (squidpy MERFISH_0.24.h5ad, figshare). results/realism.csv, results/realism_meta.json.
+- Generator matches real median tx/cell and packing within 15% at every anchor (packing exact; tx within 1.6%). results/realism_oracle.csv.
+- Oracle accuracy inside the realistic band (sigma<=2um): [0.719, 0.953]; Xenium-like [0.719, 0.922], MERFISH-like [0.866, 0.953].
+
 ## Current plan / next action
-Run Gate 0 on a branch (see gate0_executor_prompt). Report back in the specified format. Orchestrator audits the report against the locked thresholds; PASS proceeds to the full frontier sweep + diagnostic, KILL pivots.
+Orchestrator audits outputs/GATE0_REPORT.md against the locked thresholds; PASS proceeds to the full frontier sweep + diagnostic, KILL pivots. Open follow-ups if continued: model overlapping (non-block) expression so the profile-ARI ceiling is not saturated; anchor the displacement sigma axis to a measured quantity rather than an assumed band; add a real-segmenter headroom point (Baysor/Proseg) at a representative grid cell.
 
 ## Competitor watchlist (re-check before posting anything public)
 - segger (Marioni / Huber, EMBL); Proseg (Newell lab, Fred Hutch); TopACT and the Cambridge topological-data-analysis group (own a published synthetic ST generator); TRACER authors; the authors of the June 2026 segmentation review (arXiv 2606.09675). The moat against all of them is the answerability-frontier framing and execution speed, since the generator tooling already exists in the field.
