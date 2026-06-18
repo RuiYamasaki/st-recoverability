@@ -50,6 +50,20 @@ Gate 0 measured values below are verified to committed result files on branch ga
 - That the dense-regime limit bites across the ENTIRE combined uncertainty band: at the loosest marker cutoff (0.6) with the tightest adjacency bin, sigma reaches 0.20 um where dense accuracy is 0.972 (above 0.95). The optimistic-end claim is sensitive to the marker-selection design choice.
 - A sigma stable to within a tight factor across all design choices (it spans about 13x across the full grid, though it is stable at the pre-registered cutoff 0.7).
 
+### Can-claim update (2026-06-18, post Gate 2)
+- Displacement sigma measured directly on Xenium is about 1.61 um (bootstrap 95% CI [0.79, 2.53]); under the pre-registered exclusive-marker statistic the statistical CI keeps dense-regime best-possible assignment accuracy below 0.95, and the limit survives negative-binomial within-type variance.
+
+### Cannot-claim update 2 (2026-06-18, post Gate 2)
+- The dense-regime limit as a robust result. It depends on the marker-exclusivity criterion: loosening the cutoff to 0.6 pushes dense oracle accuracy to 0.972, above 0.95. The claim must not be made until the exclusivity criterion is principled (non-circular) and the limit is replicated on an independent Xenium dataset.
+- Any "Xenium in general" framing; the limit is specific to the dense tissue tail.
+
+### Gate 3 pre-committed thresholds (locked 2026-06-18; orchestrator judges, executor does not)
+- PASS if, under a principled non-circular marker-validity test: the previously destabilizing markers are shown to fail the validity test on independent grounds; the re-pinned sigma is stable and its bootstrap CI keeps dense-regime oracle accuracy below 0.95 on the breast dataset AND on at least one independent Xenium dataset of a different tissue; and sigma and the dense limit are stable across reasonable cell-typing choices.
+- KILL if, under the principled validity test, the dense-regime oracle accuracy exceeds 0.95 across the sigma CI on either dataset.
+- KILL if no principled validity test cleanly separates the sigma-destabilizing markers from the stable ones, meaning the cutoff dependence is genuine rather than a marker-validity artifact.
+- KILL if sigma or the dense limit swings across reasonable cell-typing choices the way it did across the old marker cutoffs.
+- RETREAT (not full kill) if the dense limit holds on breast but not on the independent tissue: the claim narrows and the paper reframes around the method, the frontier, and the bounded result rather than a general dense-tissue limit.
+
 ### Can-claim update (2026-06-18, post Gate 1)
 - The recovery frontier survives realistic overlapping expression (assignment frontier essentially unchanged, oracle-minus-naive gap preserved) and survives non-Voronoi geometry and non-Gaussian displacement (monotone, oracle at or above naive, dense-regime limit biting).
 - At a sigma pinned to measured MERFISH spatial marker-leakage, best-possible transcript-assignment accuracy is about 0.84 sparse and 0.64 dense, both below 0.9.
