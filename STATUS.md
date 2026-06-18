@@ -36,3 +36,9 @@ Orchestrator audits outputs/GATE0_REPORT.md against the locked thresholds; PASS 
 
 ## Competitor watchlist (re-check before posting anything public)
 - segger (Marioni / Huber, EMBL); Proseg (Newell lab, Fred Hutch); TopACT and the Cambridge topological-data-analysis group (own a published synthetic ST generator); TRACER authors; the authors of the June 2026 segmentation review (arXiv 2606.09675). The moat against all of them is the answerability-frontier framing and execution speed, since the generator tooling already exists in the field.
+
+### Gate 0 result (logged 2026-06-18): QUALIFIED PASS
+All three KILL conditions cleanly not triggered. A non-trivial, smooth, monotone, oracle-validated recovery frontier exists; oracle at or above naive at all 125 grid points; generator matches real summary statistics within 1.52%. The limit bites in the dense Xenium-like regime (oracle accuracy 0.719 to 0.922, below the 0.9 informative bar). Qualification: the PASS sub-condition "varies from below 0.6 to above 0.9 across the realistic range" was met only across the full grid (which includes displacement sigma of 4 to 8 micrometres), not within the assumed-realistic sigma band of 2 micrometres or less, where the floor is 0.719. Cause: the Gate 0 threshold left the displacement axis unspecified (orchestrator's spec gap). Resolution: Gate 1 anchors sigma to data rather than assuming it.
+
+### Decision D6 (2026-06-18): run Gate 1 robustness gate before any paper build
+Two Gate 0 simplifications make the numbers provisional and are the first hostile-reviewer attacks: disjoint-marker expression (inflates type recovery to a saturated profile ARI of 1.0 and likely inflates assignment accuracy) and an assumed rather than measured displacement sigma. Gate 1 makes both realistic and adds a structural-assumption sensitivity, before the full frontier is treated as a result.

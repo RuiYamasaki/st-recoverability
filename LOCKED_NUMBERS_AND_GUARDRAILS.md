@@ -46,3 +46,18 @@ Decision rests on the oracle frontier shape and the realism match. Running real 
 ## Disavowed strong claims (may appear in the paper only as the wrong framing being corrected, never as a finding)
 - "This will be a Nature paper." A target is not a claim.
 - "The recoverability-frontier niche is uncontested."
+
+### Can-claim update (2026-06-18, post Gate 0)
+- A non-trivial, computable, method-independent recovery ceiling exists on synthetic data matched to real summary statistics, monotone in packing and displacement, with oracle at or above a naive baseline everywhere.
+
+### Cannot-claim update (2026-06-18, post Gate 0)
+- The real-world severity or location of the frontier (displacement sigma is unanchored until Gate 1).
+- Any final accuracy number (the disjoint-marker model makes Gate 0 accuracies optimistic upper bounds).
+- That cell-typing survives identity loss (the saturated profile ARI of 1.0 is a disjoint-marker artifact, not a finding).
+
+### Gate 1 pre-committed thresholds (locked 2026-06-18; orchestrator judges, executor does not)
+- KILL if, under realistic overlapping expression and the data-pinned sigma, oracle assignment accuracy in the real-data-anchored regime is greater than 0.95 (the limit does not bite once the model is realistic; the Gate 0 frontier was a gene-model artifact).
+- KILL if the measured real marker-leakage cannot be reproduced by any sigma in a plausible range (0 to 15 micrometres), indicating the displacement model is misspecified and the oracle ceiling will not transfer.
+- KILL if the frontier loses monotonicity, or the "limit bites in the dense regime" conclusion flips, under either realistic expression or the structural-sensitivity perturbations.
+- PASS if, under realistic expression with data-pinned sigma, the frontier stays non-trivial and monotone, oracle stays at or above naive, and the real-anchored operating point sits below about 0.9 with a structured frontier present (an easy recoverable end and a hard end), and this survives the structural-sensitivity perturbations. A very low real-anchored accuracy with structure intact is a strong frontier, not a failure.
+- Sanity: profile ARI must fall below 1.0 under realistic expression; if it does not, the expression model is not genuinely overlapping.
