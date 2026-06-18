@@ -34,6 +34,7 @@ from scipy.spatial import cKDTree
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import config  # noqa: E402
+import expression  # noqa: E402
 
 # --- generator structural constants (fixed modelling choices) ---
 N_TARGET = 400            # cells per field, held constant so resolution/power are uniform
@@ -41,6 +42,10 @@ JITTER_FRAC = 0.33        # lattice jitter as a fraction of lattice spacing
 RES_CELL = 6.0            # pixels per mean cell radius (grid resolution target)
 GRID_MIN, GRID_MAX = 128, 768
 INTERIOR_MARGIN_SIGMA = 3.0   # interior cells must sit >= r_mean + 3*sigma from the edge
+ANISO_ELONGATION = (1.5, 2.5)  # Gate 1 non-Voronoi geometry: per-cell elongation ratio range
+
+# The default expression model reproduces Gate 0 exactly. Gate 1 passes a realistic model.
+DEFAULT_MODEL = expression.build_disjoint_model()
 
 
 @dataclass
@@ -59,6 +64,8 @@ class Field:
     cell_pixels: list         # cell_pixels[c] = flat pixel indices belonging to cell c
     cell_area_px: np.ndarray  # (N,) pixel count per cell
     interior_cell: np.ndarray # (N,) bool
+    model: object = None       # ExpressionModel used for this field
+    geometry: str = "voronoi"  # "voronoi" (Gate 0) or "aniso" (Gate 1 structural)
 
 
 def _pixel_centers(grid: int, dx: float) -> np.ndarray:
@@ -67,8 +74,30 @@ def _pixel_centers(grid: int, dx: float) -> np.ndarray:
     return np.column_stack([xx.ravel(), yy.ravel()])
 
 
+def _aniso_label(centers, pts, grid, rng):
+    """Non-Voronoi label image: each pixel assigned to the cell minimising an
+    anisotropic (elongated, randomly oriented) Mahalanobis distance. Cells become
+    irregular and elongated rather than convex Voronoi polygons."""
+    n = centers.shape[0]
+    theta = rng.uniform(0.0, np.pi, size=n)
+    elong = rng.uniform(*ANISO_ELONGATION, size=n)   # ratio a/b
+    a = np.sqrt(elong); b = 1.0 / np.sqrt(elong)     # area-preserving (a*b == 1)
+    P = pts.shape[0]
+    best = np.full(P, np.inf); arg = np.full(P, -1, dtype=np.int32)
+    for c in range(n):
+        ct, st = np.cos(theta[c]), np.sin(theta[c])
+        d = pts - centers[c]
+        u = ct * d[:, 0] + st * d[:, 1]              # along major axis
+        v = -st * d[:, 0] + ct * d[:, 1]             # along minor axis
+        q = (u / a[c]) ** 2 + (v / b[c]) ** 2
+        upd = q < best
+        best[upd] = q[upd]; arg[upd] = c
+    return arg.reshape(grid, grid).astype(np.int32)
+
+
 def build_field(packing_cells_per_mm2: float, sigma_um: float, seed: int,
-                n_target: int = N_TARGET) -> Field:
+                n_target: int = N_TARGET, model=None, geometry: str = "voronoi") -> Field:
+    model = model or DEFAULT_MODEL
     rng = np.random.default_rng(seed)
     # domain side so that N_TARGET cells give the requested packing exactly
     area_um2 = n_target / packing_cells_per_mm2 * 1e6
@@ -89,12 +118,16 @@ def build_field(packing_cells_per_mm2: float, sigma_um: float, seed: int,
     dx_target = r_mean / RES_CELL
     grid = int(np.clip(round(L / dx_target), GRID_MIN, GRID_MAX))
     dx = L / grid
-
-    # nearest-centre label image == Voronoi membership of each pixel
-    tree = cKDTree(centers)
     pts = _pixel_centers(grid, dx)
-    _, nn = tree.query(pts, k=1)
-    label = nn.reshape(grid, grid).astype(np.int32)
+
+    if geometry == "voronoi":
+        # nearest-centre label image == Voronoi membership of each pixel
+        _, nn = cKDTree(centers).query(pts, k=1)
+        label = nn.reshape(grid, grid).astype(np.int32)
+    elif geometry == "aniso":
+        label = _aniso_label(centers, pts, grid, rng)
+    else:
+        raise ValueError(f"unknown geometry {geometry!r}")
 
     # per-cell pixel lists and areas
     order = np.argsort(label.ravel(), kind="stable")
@@ -103,8 +136,8 @@ def build_field(packing_cells_per_mm2: float, sigma_um: float, seed: int,
     cell_pixels = [order[boundaries[c]:boundaries[c + 1]] for c in range(n_cells)]
     cell_area_px = np.diff(boundaries).astype(np.int64)
 
-    # cell types from the fixed proportions
-    types = rng.choice(config.N_TYPES, size=n_cells, p=config.TYPE_PROPORTIONS).astype(np.int32)
+    # cell types from the model's proportions
+    types = rng.choice(model.n_types, size=n_cells, p=model.proportions).astype(np.int32)
 
     # interior cells: far enough from the domain edge that the clipped Voronoi
     # region and displaced transcripts are not edge artifacts
@@ -119,6 +152,7 @@ def build_field(packing_cells_per_mm2: float, sigma_um: float, seed: int,
         L_um=L, n_cells=n_cells, r_mean_um=r_mean, dx_um=dx, grid=grid,
         centers=centers, types=types, label=label, cell_pixels=cell_pixels,
         cell_area_px=cell_area_px, interior_cell=interior,
+        model=model, geometry=geometry,
     )
 
 
@@ -132,20 +166,29 @@ class Transcripts:
     interior: np.ndarray      # (T,) bool: source cell is interior
 
 
-def generate_transcripts(field: Field, mean_tx_per_cell: float, seed: int) -> Transcripts:
+def generate_transcripts(field: Field, mean_tx_per_cell: float, seed: int,
+                         displacement: str = "gaussian", disp_epsilon: float = 0.0,
+                         abundance: np.ndarray = None) -> Transcripts:
+    """Emit transcripts. displacement: 'gaussian' (Gate 0) or 'gauss_uniform' (Gate 1
+    structural: a fraction disp_epsilon of transcripts land uniformly in the domain,
+    a heavy-tailed contamination). abundance (K,), if given, scales each type's mean
+    total count (used by leakage fitting to match real per-type abundance); None keeps
+    the uniform mean_tx_per_cell across types that the oracle's uniform prior assumes."""
     rng = np.random.default_rng(seed)
-    p = config.TYPE_GENE_COMPOSITION  # (K, G)
+    model = field.model or DEFAULT_MODEL
+    p = model.composition  # (K, G)
     dx = field.dx_um
 
     true_xy_list, gene_list, cell_list = [], [], []
     for c in range(field.n_cells):
         t = field.types[c]
-        # per-gene Poisson counts -> total ~ Poisson(mean_tx)
-        counts = rng.poisson(mean_tx_per_cell * p[t])     # (G,)
+        scale = mean_tx_per_cell if abundance is None else mean_tx_per_cell * abundance[t]
+        # per-gene Poisson counts -> total ~ Poisson(scale)
+        counts = rng.poisson(scale * p[t])     # (G,)
         n_c = int(counts.sum())
         if n_c == 0:
             continue
-        genes_c = np.repeat(np.arange(config.N_GENES), counts)
+        genes_c = np.repeat(np.arange(model.n_genes), counts)
         pix = field.cell_pixels[c]
         if pix.size == 0:
             continue
@@ -164,6 +207,13 @@ def generate_transcripts(field: Field, mean_tx_per_cell: float, seed: int) -> Tr
     true_cell = np.concatenate(cell_list)
     disp = rng.normal(0.0, field.sigma_um, size=true_xy.shape)
     obs_xy = true_xy + disp
+    if displacement == "gauss_uniform" and disp_epsilon > 0:
+        bg = rng.random(true_xy.shape[0]) < disp_epsilon
+        nb = int(bg.sum())
+        if nb:
+            obs_xy[bg] = rng.uniform(0.0, field.L_um, size=(nb, 2))
+    elif displacement not in ("gaussian", "gauss_uniform"):
+        raise ValueError(f"unknown displacement {displacement!r}")
     true_type = field.types[true_cell]
     interior = field.interior_cell[true_cell]
     return Transcripts(obs_xy=obs_xy, true_xy=true_xy, gene=gene,

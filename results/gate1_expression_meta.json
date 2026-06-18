@@ -1,0 +1,39 @@
+{
+  "model": "realistic_merfish_cellclass_native",
+  "n_types": 10,
+  "n_genes": 155,
+  "type_names": [
+    "Astrocyte",
+    "Endothelial 1",
+    "Endothelial 3",
+    "Ependymal",
+    "Excitatory",
+    "Inhibitory",
+    "Microglia",
+    "OD Immature 1",
+    "OD Mature 2",
+    "Pericytes"
+  ],
+  "proportions": [
+    0.13664710198092442,
+    0.05520909757887014,
+    0.021460014673514306,
+    0.04016874541452678,
+    0.2235876742479824,
+    0.407006603081438,
+    0.019442406456346296,
+    0.0409024211298606,
+    0.0442039618488628,
+    0.011371973587674248
+  ],
+  "excl_threshold": 0.7,
+  "n_exclusive_markers": 12,
+  "overlap_metrics": {
+    "mean_pairwise_cosine": 0.21022690814055697,
+    "max_pairwise_cosine": 0.7339640597278415,
+    "n_exclusive_markers": 12,
+    "frac_mass_exclusive_genes": 0.04491074147880104,
+    "frac_mass_shared_genes": 0.955089258521199
+  },
+  "reference": "Moffitt 2018 MERFISH mouse hypothalamic preoptic (squidpy MERFISH_0.24.h5ad); per-type mean expression over the 155-gene panel from native cell_class labels"
+}

@@ -60,7 +60,7 @@ def build_oracle_maps(field: Field):
     Dmax[t]  = per-pixel max blurred density over type-t cells.
     argcell[t] = per-pixel cell index attaining that max (-1 if no type-t cell near).
     """
-    K, grid = config.N_TYPES, field.grid
+    K, grid = field.model.n_types, field.grid
     sigma_px = field.sigma_um / field.dx_um
     Dmax = np.zeros((K, grid, grid), dtype=np.float64)
     argcell = np.full((K, grid, grid), -1, dtype=np.int32)
@@ -96,13 +96,22 @@ def _pixels_of(field: Field, xy: np.ndarray):
 
 
 def oracle_assign(field: Field, Dmax: np.ndarray, argcell: np.ndarray,
-                  obs_xy: np.ndarray, gene: np.ndarray) -> np.ndarray:
-    """Vectorised Bayes-optimal assignment. Returns assigned cell index per transcript."""
-    K = config.N_TYPES
+                  obs_xy: np.ndarray, gene: np.ndarray,
+                  disp_epsilon: float = 0.0) -> np.ndarray:
+    """Vectorised Bayes-optimal assignment. Returns assigned cell index per transcript.
+
+    disp_epsilon > 0 makes the oracle Bayes-optimal for the gauss_uniform mixture
+    displacement: the per-cell density becomes (1-eps)*(f_c*phi_sigma) + eps/A_domain,
+    a flat background term (the uniform component convolved with any cell density is the
+    constant 1/A_domain). This is the same additive constant for every cell, so the
+    per-type argcell is unchanged; only the density values shift."""
     py, px = _pixels_of(field, obs_xy)
     D = Dmax[:, py, px]              # (K, T) blurred densities at each transcript's pixel
     A = argcell[:, py, px]          # (K, T) candidate cell per type
-    pg = config.TYPE_GENE_COMPOSITION[:, gene]  # (K, T) gene evidence p[t, g]
+    if disp_epsilon > 0:
+        bg = disp_epsilon / (field.L_um ** 2)
+        D = np.where(A >= 0, (1.0 - disp_epsilon) * D + bg, 0.0)
+    pg = field.model.composition[:, gene]  # (K, T) gene evidence p[t, g]
     logD = np.full_like(D, NEG_INF)
     pos = D > 0
     logD[pos] = np.log(D[pos])

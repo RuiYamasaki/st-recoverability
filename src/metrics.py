@@ -35,48 +35,48 @@ def assignment_accuracy(assigned: np.ndarray, true_cell: np.ndarray,
     return float((assigned[m] == true_cell[m]).mean()), n
 
 
-def _cell_profiles(cell_ids: np.ndarray, gene: np.ndarray, n_cells: int) -> np.ndarray:
+def _cell_profiles(cell_ids: np.ndarray, gene: np.ndarray, n_cells: int, n_genes: int) -> np.ndarray:
     """Counts[n_cells, G] of genes grouped by cell id (ids outside range ignored)."""
-    G = config.N_GENES
-    counts = np.zeros((n_cells, G), dtype=np.float64)
+    counts = np.zeros((n_cells, n_genes), dtype=np.float64)
     ok = (cell_ids >= 0) & (cell_ids < n_cells)
     np.add.at(counts, (cell_ids[ok], gene[ok]), 1.0)
     return counts
 
 
-def _cluster(profiles: np.ndarray, seed: int) -> np.ndarray:
+def _cluster(profiles: np.ndarray, seed: int, n_types: int) -> np.ndarray:
     """Row-normalise to composition and KMeans into K clusters (deterministic)."""
     tot = profiles.sum(axis=1, keepdims=True)
     comp = np.divide(profiles, tot, out=np.zeros_like(profiles), where=tot > 0)
-    km = KMeans(n_clusters=config.N_TYPES, n_init=10, random_state=seed)
+    km = KMeans(n_clusters=n_types, n_init=10, random_state=seed)
     return km.fit_predict(comp)
 
 
-def profile_ari(field_n_cells: int, interior_cell: np.ndarray,
+def profile_ari(model, field_n_cells: int, interior_cell: np.ndarray,
                 assigned: np.ndarray, true_cell: np.ndarray, gene: np.ndarray,
                 true_types: np.ndarray, seed: int) -> dict:
     """Compute the oracle profile-recovery ARIs over interior cells."""
+    K, G = model.n_types, model.n_genes
+    nan_out = {"profile_ari_vs_truetype": float("nan"),
+               "profile_ari_vs_trueclust": float("nan"),
+               "perfect_ari_vs_truetype": float("nan"),
+               "n_cells_clustered": 0}
     cells = np.where(interior_cell)[0]
-    if cells.size < config.N_TYPES + 1:
-        return {"profile_ari_vs_truetype": float("nan"),
-                "profile_ari_vs_trueclust": float("nan"),
-                "perfect_ari_vs_truetype": float("nan"),
-                "n_cells_clustered": int(cells.size)}
+    if cells.size < K + 1:
+        nan_out["n_cells_clustered"] = int(cells.size)
+        return nan_out
 
-    rec_counts = _cell_profiles(assigned, gene, field_n_cells)[cells]
-    true_counts = _cell_profiles(true_cell, gene, field_n_cells)[cells]
+    rec_counts = _cell_profiles(assigned, gene, field_n_cells, G)[cells]
+    true_counts = _cell_profiles(true_cell, gene, field_n_cells, G)[cells]
     # drop cells with no transcripts in either representation (undefined profile)
     keep = (rec_counts.sum(1) > 0) & (true_counts.sum(1) > 0)
     cells_k = cells[keep]
     rec_counts, true_counts = rec_counts[keep], true_counts[keep]
-    if cells_k.size < config.N_TYPES + 1:
-        return {"profile_ari_vs_truetype": float("nan"),
-                "profile_ari_vs_trueclust": float("nan"),
-                "perfect_ari_vs_truetype": float("nan"),
-                "n_cells_clustered": int(cells_k.size)}
+    if cells_k.size < K + 1:
+        nan_out["n_cells_clustered"] = int(cells_k.size)
+        return nan_out
 
-    rec_lab = _cluster(rec_counts, seed)
-    true_lab = _cluster(true_counts, seed)
+    rec_lab = _cluster(rec_counts, seed, K)
+    true_lab = _cluster(true_counts, seed, K)
     truth = true_types[cells_k]
     return {
         "profile_ari_vs_truetype": float(adjusted_rand_score(truth, rec_lab)),

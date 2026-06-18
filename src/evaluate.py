@@ -23,9 +23,11 @@ def _same_type_error_frac(field: Field, assigned, tx) -> float:
     return float((atype[m] == tx.true_type[m]).mean())
 
 
-def eval_point(field: Field, Dmax, argcell, mean_tx_per_cell: float, tx_seed: int) -> dict:
-    tx = generate_transcripts(field, mean_tx_per_cell, tx_seed)
-    oa = oracle_assign(field, Dmax, argcell, tx.obs_xy, tx.gene)
+def eval_point(field: Field, Dmax, argcell, mean_tx_per_cell: float, tx_seed: int,
+               displacement: str = "gaussian", disp_epsilon: float = 0.0) -> dict:
+    tx = generate_transcripts(field, mean_tx_per_cell, tx_seed,
+                              displacement=displacement, disp_epsilon=disp_epsilon)
+    oa = oracle_assign(field, Dmax, argcell, tx.obs_xy, tx.gene, disp_epsilon=disp_epsilon)
     na = naive_assign(field, tx.obs_xy)
     acc_o, n_int = assignment_accuracy(oa, tx.true_cell, tx.interior)
     acc_n, _ = assignment_accuracy(na, tx.true_cell, tx.interior)
@@ -38,11 +40,11 @@ def eval_point(field: Field, Dmax, argcell, mean_tx_per_cell: float, tx_seed: in
         assign_ari_n = float(adjusted_rand_score(tx.true_cell[m], na[m]))
     else:
         assign_ari_o = assign_ari_n = float("nan")
-    ari = profile_ari(field.n_cells, field.interior_cell, oa, tx.true_cell,
+    ari = profile_ari(field.model, field.n_cells, field.interior_cell, oa, tx.true_cell,
                       tx.gene, field.types, tx_seed + 101)
     # naive profile ARI, to contrast cell-typing recovery (oracle errors are
     # type-preserving; naive errors are type-random)
-    ari_n = profile_ari(field.n_cells, field.interior_cell, na, tx.true_cell,
+    ari_n = profile_ari(field.model, field.n_cells, field.interior_cell, na, tx.true_cell,
                         tx.gene, field.types, tx_seed + 101)
     # realized summary statistics (for the realism 15% match) over interior cells
     true_counts = np.bincount(tx.true_cell[tx.interior], minlength=field.n_cells)

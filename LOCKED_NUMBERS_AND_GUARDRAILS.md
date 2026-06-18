@@ -25,6 +25,13 @@ Gate 0 measured values below are verified to committed result files on branch ga
 | generator vs real packing max relative error at anchors | 1.4e-16 | results/realism_oracle.csv | packing_match_rel_err | 2026-06-18 |
 | real median transcripts/cell (Xenium breast / MERFISH hypothalamus) | 66-86 / 267-312 | results/realism.csv | median_tx_per_cell | 2026-06-18 |
 | real packing (Xenium breast / MERFISH hypothalamus), cells/mm^2 | 13250-14125 / 2500-2700 | results/realism.csv | packing_cells_per_mm2 | 2026-06-18 |
+| GATE 1: oracle assignment accuracy under realistic expression, full range | [0.251, 0.957] | results/gate1_sweep.csv | oracle_acc | 2026-06-18 |
+| GATE 1: oracle frontier vs Gate 0, mean/max abs diff at matched points | 0.006 / 0.032 | results/gate1_sweep.csv vs results/sweep.csv | oracle_acc | 2026-06-18 |
+| GATE 1: oracle profile ARI under realistic expression (de-saturated) | [0.667, 1.000] | results/gate1_sweep.csv | profile_ari_vs_truetype | 2026-06-18 |
+| GATE 1: realistic-expression overlap (mean pairwise cosine; exclusive-mass frac) | 0.210 ; 0.045 | results/gate1_expression_meta.json | overlap_metrics | 2026-06-18 |
+| GATE 1: data-pinned displacement sigma (point; 25-75 bracket), um | 2.67 ; [0.10, 3.03] | results/gate1_leakage.csv | sigma_pinned_um, sigma_bracket_lo/hi_um | 2026-06-18 |
+| GATE 1: oracle acc at pinned sigma, MERFISH-like (sparse) / Xenium-like (dense) | 0.836 / 0.643 | results/gate1_leakage.csv | oracle_acc_at_pinned | 2026-06-18 |
+| GATE 1: structural-sensitivity oracle ranges (baseline / aniso / mixture) | [0.290,0.925] / [0.281,0.924] / [0.254,0.833] | results/gate1_structural.csv | oracle_acc | 2026-06-18 |
 
 ## Gate 0 pre-committed thresholds (locked 2026-06-18)
 Decision rests on the oracle frontier shape and the realism match. Running real segmenters (Baysor / Proseg) is an optional headroom signal, not a kill criterion, so install friction does not gate the decision.
