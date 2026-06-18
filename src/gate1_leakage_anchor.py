@@ -132,12 +132,13 @@ def fit_sigma(curve, target):
     return float(np.interp(target, curve[order], SIGMA_GRID[order])), "ok"
 
 
-def oracle_acc_at(model, packing, density, sigma, seed):
+def oracle_acc_at(model, packing, density, sigma, seed, emission="poisson",
+                  res_cell=6.0, grid_max=768):
     if not np.isfinite(sigma):
         return float("nan"), float("nan")
-    f = build_field(packing, sigma, seed, model=model)
+    f = build_field(packing, sigma, seed, model=model, res_cell=res_cell, grid_max=grid_max)
     D, A = build_oracle_maps(f)
-    r = eval_point(f, D, A, density, seed + 1)   # uniform abundance: matches the sweep / oracle prior
+    r = eval_point(f, D, A, density, seed + 1, emission=emission)  # uniform abundance: matches the sweep
     return float(r["oracle_acc"]), float(r["naive_acc"])
 
 

@@ -96,7 +96,8 @@ def _aniso_label(centers, pts, grid, rng):
 
 
 def build_field(packing_cells_per_mm2: float, sigma_um: float, seed: int,
-                n_target: int = N_TARGET, model=None, geometry: str = "voronoi") -> Field:
+                n_target: int = N_TARGET, model=None, geometry: str = "voronoi",
+                res_cell: float = RES_CELL, grid_max: int = GRID_MAX) -> Field:
     model = model or DEFAULT_MODEL
     rng = np.random.default_rng(seed)
     # domain side so that N_TARGET cells give the requested packing exactly
@@ -114,9 +115,9 @@ def build_field(packing_cells_per_mm2: float, sigma_um: float, seed: int,
     centers = np.clip(centers, 1e-6, L - 1e-6)
     n_cells = centers.shape[0]
 
-    # grid resolution: ~RES_CELL pixels per mean cell radius, clamped
-    dx_target = r_mean / RES_CELL
-    grid = int(np.clip(round(L / dx_target), GRID_MIN, GRID_MAX))
+    # grid resolution: ~res_cell pixels per mean cell radius, clamped
+    dx_target = r_mean / res_cell
+    grid = int(np.clip(round(L / dx_target), GRID_MIN, grid_max))
     dx = L / grid
     pts = _pixel_centers(grid, dx)
 
@@ -168,23 +169,31 @@ class Transcripts:
 
 def generate_transcripts(field: Field, mean_tx_per_cell: float, seed: int,
                          displacement: str = "gaussian", disp_epsilon: float = 0.0,
-                         abundance: np.ndarray = None) -> Transcripts:
+                         abundance: np.ndarray = None, emission: str = "poisson") -> Transcripts:
     """Emit transcripts. displacement: 'gaussian' (Gate 0) or 'gauss_uniform' (Gate 1
     structural: a fraction disp_epsilon of transcripts land uniformly in the domain,
     a heavy-tailed contamination). abundance (K,), if given, scales each type's mean
-    total count (used by leakage fitting to match real per-type abundance); None keeps
-    the uniform mean_tx_per_cell across types that the oracle's uniform prior assumes."""
+    total count. emission: 'poisson' (Gate 0/1, per-type-mean rates) or 'nbinom' (Gate 2
+    Task 3: negative-binomial within-type variance via a per-cell, per-gene gamma factor
+    with mean 1 and variance model.dispersion[g], i.e. Var = mu + phi*mu^2)."""
     rng = np.random.default_rng(seed)
     model = field.model or DEFAULT_MODEL
     p = model.composition  # (K, G)
     dx = field.dx_um
+    phi = model.dispersion if emission == "nbinom" else None
+    if emission == "nbinom" and phi is None:
+        raise ValueError("nbinom emission requires model.dispersion")
 
     true_xy_list, gene_list, cell_list = [], [], []
     for c in range(field.n_cells):
         t = field.types[c]
         scale = mean_tx_per_cell if abundance is None else mean_tx_per_cell * abundance[t]
-        # per-gene Poisson counts -> total ~ Poisson(scale)
-        counts = rng.poisson(scale * p[t])     # (G,)
+        mu = scale * p[t]                      # (G,) mean rate per gene
+        if phi is not None:
+            # gamma-Poisson: per-cell, per-gene multiplier with mean 1, var phi -> NB
+            mu = mu * rng.gamma(1.0 / phi, phi)
+        # per-gene Poisson counts (-> total ~ Poisson(scale) when emission == 'poisson')
+        counts = rng.poisson(mu)               # (G,)
         n_c = int(counts.sum())
         if n_c == 0:
             continue

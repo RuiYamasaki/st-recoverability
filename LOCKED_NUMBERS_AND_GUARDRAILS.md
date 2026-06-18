@@ -32,6 +32,23 @@ Gate 0 measured values below are verified to committed result files on branch ga
 | GATE 1: data-pinned displacement sigma (point; 25-75 bracket), um | 2.67 ; [0.10, 3.03] | results/gate1_leakage.csv | sigma_pinned_um, sigma_bracket_lo/hi_um | 2026-06-18 |
 | GATE 1: oracle acc at pinned sigma, MERFISH-like (sparse) / Xenium-like (dense) | 0.836 / 0.643 | results/gate1_leakage.csv | oracle_acc_at_pinned | 2026-06-18 |
 | GATE 1: structural-sensitivity oracle ranges (baseline / aniso / mixture) | [0.290,0.925] / [0.281,0.924] / [0.254,0.833] | results/gate1_structural.csv | oracle_acc | 2026-06-18 |
+| GATE 2: Xenium-direct pinned displacement sigma (point) | 1.61 um | results/gate2_xenium_pin.csv | xenium_pinned_sigma_um | 2026-06-18 |
+| GATE 2: sigma statistical 95% CI (bootstrap B=2000) | [0.79, 2.53] um | results/gate2_sigma_uncertainty.csv | sigma_stat_ci_lo/hi_um | 2026-06-18 |
+| GATE 2: sigma design-sensitivity range (27 design choices) | [0.20, 2.48] um | results/gate2_sigma_uncertainty.csv | sigma_design_lo/hi_um | 2026-06-18 |
+| GATE 2: dense oracle accuracy at pinned sigma 1.61 um (converged grid) | 0.787 | results/gate2_sigma_uncertainty.csv | oracle_dense_at_point | 2026-06-18 |
+| GATE 2: dense oracle accuracy at statistical-CI ends (low/high sigma) | 0.891 / 0.675 | results/gate2_sigma_uncertainty.csv | oracle_dense_at_stat_ci_lo/hi | 2026-06-18 |
+| GATE 2: dense oracle accuracy at combined-band optimistic end (sigma 0.20 um) | 0.972 | results/gate2_sigma_uncertainty.csv | oracle_dense_at_combined_lo | 2026-06-18 |
+| GATE 2: pinned sigma by marker cutoff (0.7 stable / 0.6 wide / 0.8 degenerate) | [1.49,1.70] / [0.20,2.48] / none | results/gate2_design_grid.csv | sigma_um by excl_threshold | 2026-06-18 |
+| GATE 2: NB-emission sigma shift; dense accuracy shift | +0.10 um ; -0.016 | results/gate2_nbinom.csv | sigma_shift_um, dense_oracle_shift | 2026-06-18 |
+| GATE 2: NB-emission frontier monotonicity / oracle>=naive | (0,0) viol ; True | results/gate2_nbinom.csv | nb_frontier_mono_viol_*, nb_frontier_oracle_ge_naive_all | 2026-06-18 |
+
+### Can-claim update (2026-06-18, post Gate 2)
+- The displacement sigma can be measured directly on Xenium from spatial marker leakage: point 1.61 um, statistical 95% CI [0.79, 2.53] um.
+- Across the statistical 95% CI the dense-regime best-possible assignment accuracy is [0.675, 0.891], all below 0.95; the limit bites under directly-measured Xenium conditions across the statistical uncertainty, and survives negative-binomial within-type emission (monotone, oracle at or above naive).
+
+### Cannot-claim update (2026-06-18, post Gate 2)
+- That the dense-regime limit bites across the ENTIRE combined uncertainty band: at the loosest marker cutoff (0.6) with the tightest adjacency bin, sigma reaches 0.20 um where dense accuracy is 0.972 (above 0.95). The optimistic-end claim is sensitive to the marker-selection design choice.
+- A sigma stable to within a tight factor across all design choices (it spans about 13x across the full grid, though it is stable at the pre-registered cutoff 0.7).
 
 ### Can-claim update (2026-06-18, post Gate 1)
 - The recovery frontier survives realistic overlapping expression (assignment frontier essentially unchanged, oracle-minus-naive gap preserved) and survives non-Voronoi geometry and non-Gaussian displacement (monotone, oracle at or above naive, dense-regime limit biting).

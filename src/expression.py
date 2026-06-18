@@ -35,6 +35,7 @@ class ExpressionModel:
     excl_threshold: float            # exclusivity cutoff used to pick marker genes
     excl_owner: np.ndarray           # (G,) owner type per gene, -1 if not exclusive
     mean_expr: np.ndarray = field(default=None)  # (K, G) raw per-type means (abundance)
+    dispersion: np.ndarray = field(default=None)  # (G,) per-gene NB dispersion (Gate 2 Task 3)
 
     def exclusive_genes(self, t: int) -> np.ndarray:
         return np.where(self.excl_owner == t)[0]
@@ -120,6 +121,104 @@ def build_realistic_model_from_merfish(
         proportions=proportions, composition=composition, gene_names=genes,
         excl_threshold=excl_threshold, excl_owner=owner, mean_expr=mean_expr,
     )
+
+
+def load_xenium_cells_genes(h5_path: str = None, cells_parquet: str = None):
+    """Load the Xenium cell-feature matrix (Gene Expression features only) as a dense
+    cells-by-genes float32 array, aligned to the cells.parquet centroids."""
+    import h5py
+    import pandas as pd
+    import scipy.sparse as sp
+    if h5_path is None:
+        h5_path = os.path.join(DATA, "xenium_breast_rep1_cell_feature_matrix.h5")
+    if cells_parquet is None:
+        cells_parquet = os.path.join(DATA, "xenium_breast_rep1_cells.parquet")
+    with h5py.File(h5_path, "r") as f:
+        m = f["matrix"]
+        shape = tuple(m["shape"][:])
+        M = sp.csc_matrix((m["data"][:], m["indices"][:], m["indptr"][:]), shape=shape)
+        ftype = np.array([x.decode() for x in m["features"]["feature_type"][:]])
+        names = np.array([x.decode() for x in m["features"]["name"][:]])
+    gmask = ftype == "Gene Expression"
+    X = M[gmask, :].T.toarray().astype(np.float32)        # cells x genes
+    genes = list(names[gmask])
+    cells = pd.read_parquet(cells_parquet)
+    coords = cells[["x_centroid", "y_centroid"]].to_numpy(np.float64)
+    total = cells["transcript_counts"].to_numpy(np.float64)
+    return X, genes, coords, total
+
+
+def build_realistic_model_from_xenium(n_types: int = 15, excl_threshold: float = 0.7,
+                                      seed: int = None, min_cells: int = 50):
+    """Cluster the Xenium cell-by-gene matrix into types (MiniBatchKMeans on
+    median-normalised log1p counts), build per-type mean expression profiles, exclusive
+    markers, proportions, and a per-gene negative-binomial dispersion estimated from the
+    within-type count variance. Clusters smaller than min_cells are dropped (their cells
+    removed). Returns (model, real) where real carries the per-cell counts, centroids,
+    types and section geometry for the leakage measurement."""
+    from sklearn.cluster import MiniBatchKMeans
+    if seed is None:
+        seed = config.MASTER_SEED
+    X, genes, coords, total = load_xenium_cells_genes()
+    G = X.shape[1]
+    # normalise to median total, log1p, cluster
+    sf = total.copy(); sf[sf == 0] = 1.0
+    Xn = np.log1p(X / sf[:, None] * np.median(total))
+    km = MiniBatchKMeans(n_clusters=n_types, random_state=seed, n_init=10, batch_size=4096)
+    raw_labels = km.fit_predict(Xn).astype(np.int32)
+
+    # drop clusters below min_cells, remap labels to 0..K-1 (cells of dropped clusters removed)
+    keep_clusters = [t for t in range(n_types) if (raw_labels == t).sum() >= min_cells]
+    remap = {t: i for i, t in enumerate(keep_clusters)}
+    cell_keep = np.array([lbl in remap for lbl in raw_labels])
+    X, coords, total = X[cell_keep], coords[cell_keep], total[cell_keep]
+    labels = np.array([remap[lbl] for lbl in raw_labels[cell_keep]], dtype=np.int32)
+    n_types = len(keep_clusters)
+
+    mean_expr = np.vstack([X[labels == t].mean(axis=0) for t in range(n_types)])
+    proportions = np.array([(labels == t).mean() for t in range(n_types)], dtype=float)
+    row = mean_expr.sum(axis=1, keepdims=True)
+    composition = np.divide(mean_expr, row, out=np.zeros_like(mean_expr), where=row > 0)
+    owner = _exclusivity(composition, excl_threshold)
+    dispersion = _estimate_dispersion(X, labels, n_types)
+    model = ExpressionModel(
+        name="realistic_xenium_kmeans", n_types=n_types, n_genes=G,
+        type_names=[f"xen{t}" for t in range(n_types)],
+        proportions=proportions, composition=composition, gene_names=genes,
+        excl_threshold=excl_threshold, excl_owner=owner, mean_expr=mean_expr,
+    )
+    model.dispersion = dispersion
+    from scipy.spatial import cKDTree
+    d, _ = cKDTree(coords).query(coords, k=11)
+    median_nn = float(np.median(d[:, 1]))
+    local_pack = 10.0 / (np.pi * d[:, 10] ** 2) * 1e6
+    real = {
+        "X": X, "coords": coords, "types": labels, "total": total, "genes": genes,
+        "median_nn_um": median_nn,
+        "packing_median_cells_per_mm2": float(np.median(local_pack)),
+        "packing_p90_cells_per_mm2": float(np.percentile(local_pack, 90)),
+        "density_median_tx_per_cell": float(np.median(total)),
+    }
+    return model, real
+
+
+def _estimate_dispersion(X, labels, n_types, clip=(1e-3, 50.0)):
+    """Per-gene negative-binomial dispersion phi (Var = mu + phi*mu^2) by within-type
+    method of moments, pooled as the median over types."""
+    G = X.shape[1]
+    phis = np.full((n_types, G), np.nan)
+    for t in range(n_types):
+        Xt = X[labels == t]
+        if Xt.shape[0] < 10:
+            continue
+        m = Xt.mean(axis=0)
+        v = Xt.var(axis=0)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            phi = (v - m) / (m ** 2)
+        phis[t] = np.where(m > 0, phi, np.nan)
+    phi_g = np.nanmedian(phis, axis=0)
+    phi_g = np.clip(np.nan_to_num(phi_g, nan=clip[0]), *clip)
+    return phi_g
 
 
 def overlap_metrics(model: ExpressionModel) -> dict:

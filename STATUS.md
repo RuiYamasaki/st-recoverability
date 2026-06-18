@@ -54,3 +54,10 @@ All three KILL conditions not triggered at the pinned values. The recovery front
 
 ### Decision D7 (2026-06-18): run Gate 2 to pin sigma directly on Xenium with error bars
 The dense-regime claim rests on a borrowed, imprecise sigma under idealized emission. Gate 2 measures sigma on Xenium directly, attaches a statistical CI and a design-sensitivity range, and redoes the evaluation under negative-binomial within-type emission, before the frontier is treated as a publishable result.
+
+### Gate 2 execution log (2026-06-18, branch gate2)
+Built and run. Executor asserts no PASS/KILL; raw numbers in outputs/GATE2_REPORT.md and committed result files. Regen: `python src/gate2_run_all.py`; numbers: `python src/gate2_report.py`. Gate 0 and Gate 1 left byte-identical. Downloaded Xenium cell_feature_matrix.h5 (Human Breast Cancer Rep1, 10x release 1.0.1) and clustered (MiniBatchKMeans K=14, seed MASTER_SEED); markers via exclusivity cutoff 0.7 (8 markers).
+- Task 1: Xenium-pinned displacement sigma = 1.61 um (MERFISH-pinned was 2.67 um); real spatial leakage 0.0679; dense-regime oracle accuracy at pinned sigma 0.783 (naive 0.700), sparse 0.898.
+- Task 2: bootstrap (B=2000 over markers+cells) sigma 95% CI [0.79, 2.53] um; design-sensitivity range [0.20, 2.48] um; combined band [0.20, 2.53] um. Dense oracle accuracy (converged grid) at statistical-CI ends [0.675, 0.891] (all below 0.95); at combined-band optimistic end (sigma 0.20 um) 0.972 (above 0.95). The sub-0.95-failing optimistic end comes ONLY from the loosest marker cutoff (0.6) plus tightest adjacency bin; at the pre-registered cutoff 0.7 sigma is stable [1.49, 1.70] um and dense accuracy 0.78-0.79. Dense accuracy crosses 0.95 at sigma ~0.35 um.
+- Task 3: negative-binomial within-type emission (dispersion median 4.19): sigma 1.57 -> 1.67 um (+0.10); dense oracle 0.795 -> 0.779 (-0.016); NB frontier monotone (0 violations), oracle>=naive everywhere (min gap +0.025). The frontier does not flatten under non-idealized emission.
+- Resolution caveat: the default oracle grid under-resolves small sigma and under-estimates accuracy; dense numbers use a converged grid (res_cell 24).
