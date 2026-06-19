@@ -105,3 +105,6 @@ Verified against primary sources. Janesick et al. (Nat Commun 14:8353, 2023, DOI
 
 ### Decision D12 (2026-06-19): run the worked lever analysis, target stays Nature Methods
 Pursue the Janesick triple-positive as the worked Nature-Methods lever, not a Nature-main play. Establish the ROI-local ceiling, demonstrate the artifact mechanism on synthetic ground truth, document the orthogonal contradiction, and present the artifact-consistent vs corroborated comparison. The correction rests only on orthogonal data and the synthetic null, never on our own re-assignment of the real transcripts. If the worked analysis weakens any leg, drop the lever and ship the bound-plus-tool.
+
+### Decision D13 (2026-06-19): build the four main figures; recompute Leg 2 local-to-local
+Build the four main figures from committed results; recompute Leg 2 local-to-local (observed apparent-triple rate inside the actual triple-positive region vs the synthetic adjacency-conditioned rate) so the mechanism comparison is apples-to-apples. The integrity linchpin holds: no re-assignment of real transcripts is used anywhere in the figures.
