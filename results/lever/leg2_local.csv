@@ -1,0 +1,2 @@
+threshold,median_nn_um,n_dcis,n_triple,n_prsource,n_dcis_adj_prsource,obs_rate_adj_to_prsource,obs_rate_region_local_50um,obs_rate_section_wide,syn_control_sigma0,syn_adj_pinned,syn_adj_ci_hi,obs_over_syn_pinned_ratio,within_one_order_of_magnitude,seed
+2,9.4308822784353,8898,165,657,124,0.24193548387096775,0.3173076923076923,0.018543492919757248,0.0,0.0126,0.0196,19.201228878648234,False,21190618
