@@ -162,3 +162,10 @@ Decision rests on the oracle frontier shape and the realism match. Running real 
 - The "sophisticated methods do not beat nearest-nucleus in dense tissue" observation is supported only if, with each method at its best documented configuration AND under all three metrics, no method exceeds the naive baseline by more than 0.01 (within the measured method run-to-run spread of about 0.012) in the dense regime.
 - The "real headroom below the achievable ceiling" claim is supported if the best fairly-configured method stays at least 0.05 below the oracle in the dense regime across the metrics.
 - If any fairly-configured method beats naive by more than about 0.02, or closes the oracle gap to under about 0.03, drop the "below naive" headline and frame the paper around the bound, the frontier, the diagnostic, and the headroom to the oracle.
+
+### Can-claim update (2026-06-19, post lever-scout, pending worked analysis)
+- On the Janesick Xenium breast dataset, the triple-positive DCIS co-expression sits in a regime where transcript-to-cell assignment is above the recoverability ceiling (best-possible accuracy below 0.9), so the spatial co-expression is not separable from a misassignment artifact by any method; and the authors' own orthogonal scFFPE-seq plus the clinical PR- annotation independently indicate the co-expression is not genuine.
+
+### Cannot-claim update (2026-06-19)
+- That we have proven the triple-positive false. We have not, and cannot, via our own re-assignment; the orthogonal data is the only evidence of spuriousness, and it carries the dropout caveat. The contribution is the method-independent ceiling and the mechanism demonstration, on top of a discordance the original authors already disclosed.
+- A Nature-main biological discovery from this lever. There is none; the corrected value is the pre-existing clinical annotation, and the finding is incidental.
