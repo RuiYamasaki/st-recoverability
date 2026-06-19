@@ -151,3 +151,14 @@ Decision rests on the oracle frontier shape and the realism match. Running real 
 - KILL if the frontier loses monotonicity, or the "limit bites in the dense regime" conclusion flips, under either realistic expression or the structural-sensitivity perturbations.
 - PASS if, under realistic expression with data-pinned sigma, the frontier stays non-trivial and monotone, oracle stays at or above naive, and the real-anchored operating point sits below about 0.9 with a structured frontier present (an easy recoverable end and a hard end), and this survives the structural-sensitivity perturbations. A very low real-anchored accuracy with structure intact is a strong frontier, not a failure.
 - Sanity: profile ARI must fall below 1.0 under realistic expression; if it does not, the expression model is not genuinely overlapping.
+
+### Can-claim update (2026-06-18, preliminary, post Linux headroom)
+- On realistic synthetic data with known truth, given true nuclei, three published methods (Baysor, Proseg, ComSeg) sit 0.08 to 0.11 below the oracle and tie or trail nearest-nucleus in dense tissue under the one-to-one matched metric and default-or-corrected configurations.
+
+### Cannot-claim update (2026-06-18, post Linux headroom)
+- That sophisticated methods do not beat nearest-nucleus, as a headline. It is configuration-sensitive (a 40 percent Baysor handicap was found and fixed) and rests on the one-to-one matched metric, which penalises over-segmentation. Not claimable until each method is given its best configuration and the picture holds under over-segmentation-robust metrics.
+
+### Fairness-gate pre-committed criteria (locked 2026-06-18; orchestrator judges, executor does not)
+- The "sophisticated methods do not beat nearest-nucleus in dense tissue" observation is supported only if, with each method at its best documented configuration AND under all three metrics, no method exceeds the naive baseline by more than 0.01 (within the measured method run-to-run spread of about 0.012) in the dense regime.
+- The "real headroom below the achievable ceiling" claim is supported if the best fairly-configured method stays at least 0.05 below the oracle in the dense regime across the metrics.
+- If any fairly-configured method beats naive by more than about 0.02, or closes the oracle gap to under about 0.03, drop the "below naive" headline and frame the paper around the bound, the frontier, the diagnostic, and the headroom to the oracle.

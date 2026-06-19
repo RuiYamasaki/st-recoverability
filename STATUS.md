@@ -93,3 +93,9 @@ Baysor and Proseg were toolchain-blocked on the Windows/Git-Bash machine (no Rus
 
 ### Decision D10 (2026-06-18): redo headroom on Linux (WSL) with Baysor and Proseg
 Move to a Linux environment where the field-standard methods install cleanly, recompute oracle and naive within that environment, and place Baysor and Proseg against the ceiling in both nuclei-prior and native free-segmentation modes. This is the lever on the realistic Nature Methods ceiling and possibly the headline. Cross-platform byte-identity of prior gates is explicitly not required; the committed Windows results remain canonical.
+
+### Headroom on Linux (logged 2026-06-18): favorable, pending fairness hardening
+With Baysor, Proseg, and ComSeg installed and run on Linux (oracle and naive recomputed within Linux, matching Windows to 3 dp), all three given true nuclei tie or trail the nearest-nucleus baseline (margin -0.003 to -0.03) and sit 0.08 to 0.11 below the oracle in dense tissue; Baysor free-segmentation widens the oracle gap to 0.16 to 0.17. No method beats the oracle anywhere (no scorer bug). Baysor and ComSeg assign about 100 percent; Proseg dumps 15 to 25 percent to background (its scores are a conservative floor). A 40 percent Baysor cell-radius handicap was found and corrected before reporting, which proves the numbers are configuration-sensitive.
+
+### Decision D11 (2026-06-18): run the method-fairness hardening gate before writing
+Give each method its best documented configuration, add over-segmentation-robust metrics, and fix or scope free-segmentation for Proseg and ComSeg, so the "current methods do not beat nearest-nucleus" observation cannot be dismissed as unfair benchmarking by a method author at review. This is the final hardening before the paper.
