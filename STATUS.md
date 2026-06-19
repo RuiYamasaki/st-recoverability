@@ -108,3 +108,6 @@ Pursue the Janesick triple-positive as the worked Nature-Methods lever, not a Na
 
 ### Decision D13 (2026-06-19): build the four main figures; recompute Leg 2 local-to-local
 Build the four main figures from committed results; recompute Leg 2 local-to-local (observed apparent-triple rate inside the actual triple-positive region vs the synthetic adjacency-conditioned rate) so the mechanism comparison is apples-to-apples. The integrity linchpin holds: no re-assignment of real transcripts is used anywhere in the figures.
+
+### Decision D14 (2026-06-19): render the 10 Extended Data items from committed results; no new analysis
+Render the 10 Extended Data display items from results that are already committed. No new analysis: everything needed is already computed and committed. The integrity linchpin holds: no re-assignment of real transcripts; the worked-example item uses the synthetic-field ceiling, the known-truth synthetic null, and the released matrix read only.
