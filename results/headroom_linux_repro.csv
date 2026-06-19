@@ -1,0 +1,10 @@
+method,mode,config,rep,matched_accuracy,frac_assigned,n_method_cells,n_true_interior_cells,runtime_s,status,error
+Baysor,nuclei_prior,dense_sigma1.99,0,0.6297252876262034,1.0,275,182,56.61346507072449,ok,
+Baysor,nuclei_prior,dense_sigma1.99,1,0.6217086505886694,1.0,280,182,55.130836725234985,ok,
+Baysor,nuclei_prior,dense_sigma1.99,2,0.6230168047496059,1.0,276,182,56.171908378601074,ok,
+Baysor,free_segmentation,dense_sigma1.99,0,0.5694831113943581,1.0,263,182,54.45255446434021,ok,
+Baysor,free_segmentation,dense_sigma1.99,1,0.5637138161204843,1.0,260,182,52.95318579673767,ok,
+Baysor,free_segmentation,dense_sigma1.99,2,0.5658940730553785,1.0,266,182,58.71426272392273,ok,
+Proseg,nuclei_prior,dense_sigma1.99,0,0.5542213128500989,0.8029718579143327,242,182,13.647371292114258,ok,
+Proseg,nuclei_prior,dense_sigma1.99,1,0.5598564384664408,0.8069969476402912,244,182,14.098445415496826,ok,
+Proseg,nuclei_prior,dense_sigma1.99,2,0.5657599033978465,0.8193405561332304,247,182,13.729042768478394,ok,

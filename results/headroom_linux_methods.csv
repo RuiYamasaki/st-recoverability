@@ -1,0 +1,21 @@
+method,mode,config,matched_accuracy,frac_assigned,runtime_s,status,error
+Proseg,nuclei_prior,dense_sigma1.43,0.6248037152116535,0.8372924392770038,13.470564126968384,ok,
+Proseg,free_segmentation,dense_sigma1.43,,,1.239776611328125e-05,unsupported,RuntimeError('Proseg has no prior-free mode: it requires an initial segmentation (--cell-id-column). Free-segmentation is unsupported for Proseg.')
+Proseg,nuclei_prior,dense_sigma1.99,0.5637138161204843,0.802334552041056,13.591076135635376,ok,
+Proseg,free_segmentation,dense_sigma1.99,,,1.9073486328125e-05,unsupported,RuntimeError('Proseg has no prior-free mode: it requires an initial segmentation (--cell-id-column). Free-segmentation is unsupported for Proseg.')
+Proseg,nuclei_prior,dense_sigma2.63,0.4823963133640553,0.7974930875576037,17.948631286621094,ok,
+Proseg,free_segmentation,dense_sigma2.63,,,1.1682510375976562e-05,unsupported,RuntimeError('Proseg has no prior-free mode: it requires an initial segmentation (--cell-id-column). Free-segmentation is unsupported for Proseg.')
+Proseg,nuclei_prior,sparse_sigma1.99,0.6199077402348431,0.7468248262640786,28.90804982185364,ok,
+Proseg,free_segmentation,sparse_sigma1.99,,,1.4543533325195312e-05,unsupported,RuntimeError('Proseg has no prior-free mode: it requires an initial segmentation (--cell-id-column). Free-segmentation is unsupported for Proseg.')
+Proseg,nuclei_prior,representative_sigma1.99,0.6614457062651525,0.8512823784611458,22.191604375839237,ok,
+Proseg,free_segmentation,representative_sigma1.99,,,1.1682510375976562e-05,unsupported,RuntimeError('Proseg has no prior-free mode: it requires an initial segmentation (--cell-id-column). Free-segmentation is unsupported for Proseg.')
+Baysor,nuclei_prior,dense_sigma1.43,0.7006782265878186,1.0,55.63821196556091,ok,
+Baysor,free_segmentation,dense_sigma1.43,0.6333233102803114,1.0,53.021933794021606,ok,
+Baysor,nuclei_prior,dense_sigma1.99,0.6247610102975212,0.999966457585617,56.99659276008606,ok,
+Baysor,free_segmentation,dense_sigma1.99,0.5702881293395499,1.0,57.17670679092407,ok,
+Baysor,nuclei_prior,dense_sigma2.63,0.5412718894009216,1.0,56.1867516040802,ok,
+Baysor,free_segmentation,dense_sigma2.63,0.48921658986175115,1.0,55.78237009048462,ok,
+Baysor,nuclei_prior,sparse_sigma1.99,0.7582973879702851,1.0,56.51721978187561,ok,
+Baysor,free_segmentation,sparse_sigma1.99,0.7487718667625209,1.0,55.20266556739807,ok,
+Baysor,nuclei_prior,representative_sigma1.99,0.7100931478882225,1.0,55.59218215942383,ok,
+Baysor,free_segmentation,representative_sigma1.99,0.67359959168049,0.9885479137425035,49.775914907455444,ok,
