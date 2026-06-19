@@ -5,3 +5,4 @@ matplotlib
 anndata
 scikit-learn
 pyarrow
+h5py

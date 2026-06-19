@@ -3,11 +3,19 @@ data/
 # Python
 __pycache__/
 *.pyc
+*.pyo
+*.egg-info/
 .venv/
 venv/
+env/
+.ipynb_checkpoints/
 # OS / editor
 .DS_Store
 Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
 # Large/raw artifacts
 *.parquet
 *.h5

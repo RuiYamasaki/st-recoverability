@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software or its results, please cite it as below."
+title: "A recoverability frontier for transcript-to-cell assignment in imaging-based spatial transcriptomics"
+authors:
+  - family-names: Yamasaki
+    given-names: Rui
+year: 2026
+version: 1.0.0
+repository-code: "https://github.com/RuiYamasaki/st-recoverability"
+license: MIT
+# Update the following once the preprint/article DOI is minted:
+# doi: 10.XXXX/XXXXXX
+# preferred-citation:
+#   type: article
+#   title: "A recoverability frontier for transcript-to-cell assignment in imaging-based spatial transcriptomics"
+#   authors:
+#     - family-names: Yamasaki
+#       given-names: Rui
+#   year: 2026
+#   doi: 10.XXXX/XXXXXX
