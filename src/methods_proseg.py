@@ -51,7 +51,10 @@ def _nucleus_prior(transcripts_df, cells_df):
     return nuc, idx
 
 
-def run_proseg(transcripts_df, cells_df, model, with_prior=True):
+def run_proseg(transcripts_df, cells_df, model, with_prior=True, extra_args=None):
+    """extra_args: optional list of documented Proseg CLI flags appended for the fairness
+    sweep (for example ["--voxel-size", "0.5"], ["--prior-seg-reassignment-prob", "0.7"],
+    ["--no-diffusion"]). None = documented defaults."""
     if not with_prior:
         raise RuntimeError(
             "Proseg has no prior-free mode: it requires an initial segmentation "
@@ -75,8 +78,10 @@ def run_proseg(transcripts_df, cells_df, model, with_prior=True):
         "-x", "x", "-y", "y", "-z", "z", "--gene-column", "gene", "--ignore-z-coord",
         "--cell-id-column", "nucleus", "--cell-id-unassigned", "-1",
         "--overwrite",
-        "--output-transcript-metadata", out_csv,
     ]
+    if extra_args:
+        cmd += list(extra_args)
+    cmd += ["--output-transcript-metadata", out_csv]
     subprocess.run(cmd, cwd=work, check=True, capture_output=True, text=True)
 
     out = pd.read_csv(out_csv)

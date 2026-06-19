@@ -32,9 +32,14 @@ def _in_nucleus(transcripts_df, cells_df):
     return prior, idx
 
 
-def run_comseg(transcripts_df, cells_df, model, with_prior=True):
+def run_comseg(transcripts_df, cells_df, model, with_prior=True,
+               mean_cell_diameter=None, max_radius_factor=2.5):
+    """Optional params (for the fairness sweep; None = documented default):
+    mean_cell_diameter (um, default 10; ComSeg's most impactful parameter, sets the
+    co-expression graph radius), max_radius_factor (max_cell_radius = mcd * factor)."""
     import random
     from comseg import dataset, dictionary
+    mcd = MEAN_CELL_DIAMETER_UM if mean_cell_diameter is None else float(mean_cell_diameter)
     np.random.seed(0); random.seed(0)   # ComSeg samples internally; seed for reproducibility
     prior, nearest = _in_nucleus(transcripts_df, cells_df)
     work = tempfile.mkdtemp(prefix="comseg_")
@@ -56,16 +61,21 @@ def run_comseg(transcripts_df, cells_df, model, with_prior=True):
                         "in_nucleus": np.arange(len(cells_df)) + 1})
     cen.to_csv(os.path.join(cen_dir, "fov0.csv"), index=False)
 
+    # Free mode: ComSeg's valid prior-free graph-partition method is "louvain" with no
+    # per-RNA prior (prior_name=None). Note ComSeg's run_all still associates RNA communities
+    # to the centroid landmarks (classify_centroid + associate_rna2landmark), so the true
+    # centroids are retained even in this mode; it is therefore "no per-RNA nucleus prior",
+    # not fully landmark-free.
     ds = dataset.ComSegDataset(
-        path_dataset_folder=img_dir, prior_name="in_nucleus",
+        path_dataset_folder=img_dir, prior_name=("in_nucleus" if with_prior else None),
         image_csv_files=["fov0.csv"], centroid_csv_files=["fov0.csv"],
         path_cell_centroid=cen_dir, dict_scale={"x": 1, "y": 1, "z": 1},
-        mean_cell_diameter=MEAN_CELL_DIAMETER_UM, gene_column="gene")
+        mean_cell_diameter=mcd, gene_column="gene")
     ds.compute_edge_weight()
     cd = dictionary.ComSegDict(
-        dataset=ds, mean_cell_diameter=MEAN_CELL_DIAMETER_UM,
-        community_detection="with_prior" if with_prior else "without_prior", seed=0)
-    cd.run_all(max_cell_radius=MEAN_CELL_DIAMETER_UM * 2.5)
+        dataset=ds, mean_cell_diameter=mcd,
+        community_detection="with_prior" if with_prior else "louvain", seed=0)
+    cd.run_all(max_cell_radius=mcd * max_radius_factor)
 
     # extract per-spot cell_index_pred from the single FOV graph (node i == input row i)
     key = [k for k in cd.keys()][0]

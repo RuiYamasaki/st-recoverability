@@ -1,0 +1,14 @@
+method,mode,config,config_label,runtime_s,status,error,acc_one_to_one,acc_many_to_one,ari,n_pred_cells,n_true_cells,pred_true_ratio,frac_assigned,n_interior_transcripts
+Baysor,free_segmentation,dense_sigma1.43,scale1.25x_m50_c0.8_free,51.33160209655762,ok,,0.6252046373325315,0.6602519127326184,0.507690413222776,231.0,190.0,1.2157894736842105,1.0,29931.0
+Proseg,free_segmentation,dense_sigma1.43,native,4.5299530029296875e-06,unsupported,RuntimeError('Proseg has no prior-free mode: it requires an initial segmentation (--cell-id-column). Free-segmentation is unsupported for Proseg.'),,,,,,,,
+ComSeg,free_louvain_centroids,dense_sigma1.43,louvain,0.724144697189331,failed,KeyError(None),,,,,,,,
+Baysor,free_segmentation,dense_sigma1.99,scale1.25x_m50_c0.8_free,51.35781240463257,ok,,0.5212155770972394,0.543420655418777,0.40680266375558544,203.0,182.0,1.1153846153846154,1.0,29813.0
+Proseg,free_segmentation,dense_sigma1.99,native,4.291534423828125e-06,unsupported,RuntimeError('Proseg has no prior-free mode: it requires an initial segmentation (--cell-id-column). Free-segmentation is unsupported for Proseg.'),,,,,,,,
+ComSeg,free_louvain_centroids,dense_sigma1.99,louvain,0.11068582534790039,failed,KeyError(None),,,,,,,,
+Baysor,free_segmentation,dense_sigma2.63,scale1.25x_m50_c0.8_free,51.068018198013306,ok,,0.45301382488479264,0.48258064516129034,0.34363850448298117,191.0,168.0,1.1369047619047619,1.0,27125.0
+Proseg,free_segmentation,dense_sigma2.63,native,4.291534423828125e-06,unsupported,RuntimeError('Proseg has no prior-free mode: it requires an initial segmentation (--cell-id-column). Free-segmentation is unsupported for Proseg.'),,,,,,,,
+ComSeg,free_louvain_centroids,dense_sigma2.63,louvain,0.11144828796386719,failed,KeyError(None),,,,,,,,
+Baysor,free_segmentation,sparse_sigma1.99,scale1.25x_m50_c0.8_free,51.23955798149109,ok,,0.7118080517613228,0.7356218547807333,0.6192345457262094,236.0,203.0,1.1625615763546797,0.9999700455307932,33384.0
+Proseg,free_segmentation,sparse_sigma1.99,native,5.0067901611328125e-06,unsupported,RuntimeError('Proseg has no prior-free mode: it requires an initial segmentation (--cell-id-column). Free-segmentation is unsupported for Proseg.'),,,,,,,,
+Baysor,free_segmentation,representative_sigma1.99,scale1.25x_m50_c0.8_free,45.344979763031006,ok,,0.6031006762791885,0.6164348602781676,0.491603607296965,202.0,193.0,1.0466321243523315,0.9899834120199056,31348.0
+Proseg,free_segmentation,representative_sigma1.99,native,4.0531158447265625e-06,unsupported,RuntimeError('Proseg has no prior-free mode: it requires an initial segmentation (--cell-id-column). Free-segmentation is unsupported for Proseg.'),,,,,,,,

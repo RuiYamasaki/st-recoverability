@@ -73,10 +73,18 @@ def _nucleus_prior(transcripts_df, cells_df):
     return prior, idx
 
 
-def run_baysor(transcripts_df, cells_df, model, with_prior=True):
+def run_baysor(transcripts_df, cells_df, model, with_prior=True,
+               scale=None, min_molecules=None, prior_confidence=None):
+    """Optional params (for the fairness sweep; None = documented default):
+    scale (um, expected cell radius; default = true mean cell radius via _scale_um),
+    min_molecules (default 50, Baysor Xenium config),
+    prior_confidence (default 0.5, Baysor Xenium config; nuclei-prior mode only)."""
     prior, nearest = _nucleus_prior(transcripts_df, cells_df)
     n = len(transcripts_df)
-    scale = _scale_um(cells_df)
+    if scale is None:
+        scale = _scale_um(cells_df)
+    mmc = MIN_MOLECULES_PER_CELL if min_molecules is None else int(min_molecules)
+    conf = PRIOR_SEG_CONFIDENCE if prior_confidence is None else float(prior_confidence)
     work = tempfile.mkdtemp(prefix="baysor_")
     mol = os.path.join(work, "mol.csv")
     df = pd.DataFrame({
@@ -91,10 +99,10 @@ def run_baysor(transcripts_df, cells_df, model, with_prior=True):
     out_dir = os.path.join(work, "out")
     os.makedirs(out_dir, exist_ok=True)
     cmd = [BAYSOR, "run", "-x", "x", "-y", "y", "-g", "gene",
-           "-m", str(MIN_MOLECULES_PER_CELL), "-s", f"{scale:.4f}",
+           "-m", str(mmc), "-s", f"{scale:.4f}",
            "-o", out_dir + os.sep]
     if with_prior:
-        cmd += ["--prior-segmentation-confidence", str(PRIOR_SEG_CONFIDENCE)]
+        cmd += ["--prior-segmentation-confidence", str(conf)]
     cmd += [mol]
     if with_prior:
         cmd += [":prior"]
