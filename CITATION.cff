@@ -1,20 +1,16 @@
 cff-version: 1.2.0
 message: "If you use this software or its results, please cite it as below."
-title: "A recoverability frontier for transcript-to-cell assignment in imaging-based spatial transcriptomics"
+title: "A method-independent recoverability ceiling for transcript-to-cell assignment in imaging-based spatial transcriptomics"
+type: software
 authors:
   - family-names: Yamasaki
     given-names: Rui
-year: 2026
-version: 1.0.0
+    # orcid: "https://orcid.org/0000-0000-0000-0000"  # add if available
+doi: 10.5281/zenodo.20760704
+version: v1.0.1
+date-released: 2026-06-19
+url: "https://github.com/RuiYamasaki/st-recoverability"
 repository-code: "https://github.com/RuiYamasaki/st-recoverability"
 license: MIT
-# Update the following once the preprint/article DOI is minted:
-# doi: 10.XXXX/XXXXXX
-# preferred-citation:
-#   type: article
-#   title: "A recoverability frontier for transcript-to-cell assignment in imaging-based spatial transcriptomics"
-#   authors:
-#     - family-names: Yamasaki
-#       given-names: Rui
-#   year: 2026
-#   doi: 10.XXXX/XXXXXX
+# The DOI above is the Zenodo concept DOI (all versions); it always resolves to the latest release.
+# Add a preprint/article DOI here once available.
