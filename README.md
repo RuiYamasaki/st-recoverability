@@ -1,6 +1,7 @@
 # A method-independent recoverability ceiling for transcript-to-cell assignment in imaging-based spatial transcriptomics
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20760704.svg)](https://doi.org/10.5281/zenodo.20760704)
+https://doi.org/10.21203/rs.3.rs-10093252/v1 
 
 This repository maps a **method-independent recoverability ceiling** for transcript-to-cell assignment in imaging-based spatial transcriptomics (Xenium, MERFISH, and similar). Using a by-construction synthetic ground-truth generator and a Bayes-optimal ("oracle") assignment, it characterizes when assigning transcripts to their cell of origin is recoverable at all, as a function of transcript density, cell packing, and molecular displacement. The displacement is pinned to real Xenium and MERFISH data, and the resulting ceiling shows that in densely packed tissue (around 13,600 cells/mm^2, realistic for breast, lung, and colorectal tumor) the best-possible assignment accuracy falls below 0.9: assignment there is unrecoverable by any method. Real published segmenters (Baysor, Proseg, ComSeg) given true nuclei sit below this ceiling in dense tissue and do not exceed a naive nearest-nucleus baseline by more than the measured run-to-run noise. A worked diagnostic applies the ceiling to a published Xenium triple-positive co-expression claim and places it, together with the orthogonal data that bears on it, on principled footing.
 
@@ -86,4 +87,4 @@ If you use this software or its results, please cite it (see [CITATION.cff](CITA
 
 > Yamasaki, R. (2026). A method-independent recoverability ceiling for transcript-to-cell assignment in imaging-based spatial transcriptomics. Zenodo. https://doi.org/10.5281/zenodo.20760704
 
-The DOI [10.5281/zenodo.20760704](https://doi.org/10.5281/zenodo.20760704) is the Zenodo concept DOI: it always resolves to the latest version. A preprint/article DOI will be added here and to `CITATION.cff` once available.
+The DOI [10.5281/zenodo.20760704](https://doi.org/10.5281/zenodo.20760704) is the Zenodo concept DOI: it always resolves to the latest version. A preprint/article DOI: https://doi.org/10.21203/rs.3.rs-10093252/v1 
